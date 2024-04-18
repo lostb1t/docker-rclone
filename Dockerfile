@@ -1,6 +1,5 @@
-FROM alpine:latest
-MAINTAINER Johan Els <johan@who-els.co.za>
-
+#FROM alpine:latest
+FROM rclone/rclone:latest
 WORKDIR /
 
 RUN apk update && \
@@ -26,28 +25,18 @@ ADD configs/afp.conf /etc/afp.conf
 EXPOSE 548
 
 # Install RCLONE
-RUN apk add --no-cache curl unzip
-RUN curl -O https://downloads.rclone.org/rclone-current-linux-amd64.zip && \
-    unzip rclone-current-linux-amd64.zip && \
-    cd rclone-*-linux-amd64 && \
-    cp rclone /usr/bin/ && \
-    chmod 755 /usr/bin/rclone && \
-    rm -rf rclone-current-linux-amd64.zip rclone-*-linux-amd64
+# RUN apk add --no-cache curl unzip
+# RUN curl -O https://downloads.rclone.org/rclone-current-linux-amd64.zip && \
+#     unzip rclone-current-linux-amd64.zip && \
+#     cd rclone-*-linux-amd64 && \
+#     cp rclone /usr/bin/ && \
+#     chmod 755 /usr/bin/rclone && \
+#     chmod +x /usr/bin/rclone && \
+#     rm -rf rclone-current-linux-amd64.zip rclone-*-linux-amd64
 
 # Clean cache
 RUN rm -rf /var/cache/apk/*
-
-# Add local script files
-#ADD scripts/entrypoint.sh /usr/local/bin/entrypoint.sh
-#ADD scripts/manage.sh /usr/local/bin/manage.sh
-
-# Define entrypoint
-#ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
-#CMD /usr/local/bin/entrypoint.sh
-
-# Another entrypoint
-#ENTRYPOINT ["smbd", "--foreground", "--log-stdout"]
-#CMD []
+RUN mkdir -p /mounts/myrient
 
 ENTRYPOINT ["supervisord", "-c", "/etc/supervisord.conf"]
 

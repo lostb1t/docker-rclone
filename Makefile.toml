@@ -1,0 +1,10 @@
+[tasks.build]
+command = "docker"
+args = ["build", ".", "-t", "ghcr.io/lostb1t/ultimate:latest"]
+
+[tasks.push]
+command = "docker"
+args = ["push", "ghcr.io/lostb1t/ultimate:latest"]
+
+[tasks.deploy]
+run_task = { name = ["build", "push"], fork = false, parallel = false }
