@@ -7,22 +7,17 @@ RUN apk update && \
 
 # Install supervisor services
 RUN apk add --no-cache supervisor
-ADD configs/supervisord.conf /etc/supervisord.conf
 
 # Install AVAHI mDNS/DNS-SD protocol suite
 RUN apk add --no-cache avahi
-ADD configs/avahi-daemon.conf /etc/avahi/avahi-daemon.conf
 EXPOSE 5353/udp
 
 # Install SAMBA
 RUN apk add --no-cache samba-common-tools samba-client samba
-ADD configs/smb.conf /etc/samba/smb.conf
 EXPOSE 137/udp 138/udp 139 445
 
-# Install NETATALK
-RUN apk add --no-cache netatalk
-ADD configs/afp.conf /etc/afp.conf
-EXPOSE 548
+
+COPY config/ /config
 
 # Install RCLONE
 # RUN apk add --no-cache curl unzip
@@ -36,8 +31,8 @@ EXPOSE 548
 
 # Clean cache
 RUN rm -rf /var/cache/apk/*
-RUN mkdir -p /mounts/myrient
 
-ENTRYPOINT ["supervisord", "-c", "/etc/supervisord.conf"]
+
+ENTRYPOINT ["supervisord", "-c", "/config/supervisord.conf"]
 
 CMD []
